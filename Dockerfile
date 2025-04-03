@@ -2,11 +2,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copiar la solución y los proyectos
-COPY . .  
+# Copiar la solución y los proyectos de forma específica
+COPY price-list.sln .
+COPY price-list.csproj .
 
 # Restaurar dependencias
 RUN dotnet restore price-list.csproj
+
+# Copiar el resto de los archivos
+COPY . .
 
 # Compilar el proyecto
 RUN dotnet publish price-list.csproj -c Release -o /publish --no-restore
@@ -15,7 +19,7 @@ RUN dotnet publish price-list.csproj -c Release -o /publish --no-restore
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
-# Copiar archivos publicados desde la fase anterior
+# Copiar los archivos compilados desde la fase anterior
 COPY --from=build /publish .
 
 # Exponer el puerto de la API
