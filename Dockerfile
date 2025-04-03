@@ -1,8 +1,7 @@
 ﻿# Etapa 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
 
-# Copiar todo el contenido del proyecto al contenedor
+# Copiar todo sin usar una subcarpeta
 COPY . .
 
 # Restaurar dependencias
@@ -13,7 +12,6 @@ RUN dotnet publish "price-list.csproj" -c Release -o /publish --no-restore
 
 # Etapa 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-WORKDIR /app
 
 # Copiar los archivos compilados
 COPY --from=build /publish .
